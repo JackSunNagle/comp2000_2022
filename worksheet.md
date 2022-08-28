@@ -66,7 +66,7 @@ You can place each of these three `Actor` objects in grid locations of your choo
 
 # Task 8
 
-Have a close look at your `Cat`, `Dog` and `Mouse` classes.  If they are anything like mine they are _all the same except for the colour they use_.  This repetition is "a bad thing" because if the same thing is done in three different places, we need to remember that updating one requires us to update all three.
+Have a close look at your `Cat`, `Dog` and `Bird` classes.  If they are anything like mine they are _all the same except for the colour they use_.  This repetition is "a bad thing" because if the same thing is done in three different places, we need to remember that updating one requires us to update all three.
 
 Is there a place that you could put all the common parts?
 
@@ -157,3 +157,65 @@ public Optional<Cell> cellAtPoint(Point p)
 🤔 How about we improve the `cellAtColRow` method now we know about optional containers?
 
 🤔 Now that we have `cellAtPoint`, lets use it.  Grow the app window to 1024x720 so we have some clear space to the right of the grid.  In this space, put the details of whatever cell we are hoving over.  For example, you might put the type of cell that is located there, and what it's elevation is.  There are many ways to do this, but one good way is to call `cellAtPoint` while painting the stage and use the resulting cell information.
+
+# Task 13
+
+Our task now is to add the ability to read in configuration data from a file.  Someone else at the company (person A) has tried and has committed some broken code.
+
+A file is kept in a "data" folder called "stage1.rvb". That file has one line for each configuration item.  We begin with just the character locations.
+
+This all seems OK, but they are getting an error on the build.  Track down the error and fix it for them.
+
+# Task 14
+
+At the moment, the file reading code will thrown an exception if it fails to read a file.  You should change this code so that _it won't ever throw an exception_.  This means you will have to think hard about what to do on a failed file read.
+
+# Task 15
+
+Currently, the game loop (in `Main.run`) is running as fast as it can.   This just burns CPU cycles and heats up your computer needlessly.  Your task is to "fix" the frame-rate so we are not pointlessly burning CPU power. You can do this by asking the current thread to sleep for a period of time using `Thread.sleep`. We want the frame-rate to be about 50 frames per second, that means we need the loop to take 20ms to complete.
+
+Sleeping a thread throws an `InterruptedException` so you will need to catch that. In fact, we don't care about the thread being interrupted so the catch block should just report the fact it was interrupted, print out a representation (via `toString`) of the exception that was thrown, and continue on as normal.
+
+🤔 Can you even cause the exception to be thrown?
+
+# Task 16
+
+Add the following method to the `Grid` class
+
+~~~~~
+    /**
+     * Takes a cell consumer (i.e. a function that has a single `Cell` argument and
+     * returns `void`) and applies that consumer to each cell in the grid.
+     * @param func The `Cell` to `void` function to apply at each spot.
+     */
+    public void doToEachCell(Consumer<Cell> func) {
+      // Your job to add the body
+    }
+~~~~~
+
+ Notice that the method accepts a `Consumer` functional interface.
+
+ Now use this method to turn the `paint` method of the `Grid` class into a single line of code.  I.e. remove the double-nested loop and replace it with a call to `doToEachCell`.
+
+🤔 Can you find anywhere else this is useful?  🤔🤔 Can you make any other useful _higher order_ methods?
+
+# Task 17
+
+The team has signed off on the game concept and it is time to start developing the gameplay.  The big-wigs at your company have decided the world needs a new turn-based strategy game in the spirit of famicom-wars, so we will build one of those.  The first step is to put in the turns!  We are going to need:
+  * Characters on different teams (Humans vs Bots)
+  * A way for the player to move their characters
+  * A way for the computer to move the bot characters.
+
+
+We have made all the changes for you, but please go through each one to understand what we have done.  I.e. your job for this task is to understand the code we have added rather than adding any code of your own.  I strongly encourage you to explore this commit on github or in VSCode using the GitLens addon where you can see exactly what lines were added/deleted/modified in making these changes.
+
+If you play the game now, you will see there are three stages:
+  * player chooses character
+  * player chooses new location
+  * computer moves its characters
+
+Notice that the computer move is random every time.  The bot AI (such as it is) asks for all cells that actor can move to, and picks one at random to move to.
+
+# Task 18
+
+We are going to build some (very rudimentary) strategy into this turn-based strategy game.  At the moment, all the actors on the bot team will just move randomly.  Instead, we want their strategy to be determined by _which row they are on_.  If they are on an even-numbered then they should move randomly, but if they are on an odd-numbered row they should _always move to the left-most possible location_.  Note:  if it is not clear yet, you need the strategy pattern so implement this.  Why is is the right pattern for this task?
