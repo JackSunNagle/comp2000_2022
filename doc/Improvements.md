@@ -1,0 +1,2 @@
+A small improvement I made was adding a thread checker in the actor class. This would print out the new thread, as well as the corresponding actor subclass name to the thread, and it would check every so often, each actor threads current status and if it was still alive. 
+This is to help check to see if each actor thread being created was actually created and working properly. 

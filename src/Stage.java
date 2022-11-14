@@ -34,7 +34,7 @@ public class Stage {
     itemLists = new HashMap<String,List<Item>>();
   }
 
-  public void update() {
+  public synchronized void update() {
     int worldX = player.getLocation().col;
     int worldY = player.getLocation().row;
     Optional<Cell> nextCell = Optional.empty();
@@ -136,6 +136,7 @@ public class Stage {
         }
       }
     }
+
     // Stage cleared?
     if(totalItems == 0) {
       try {
@@ -205,7 +206,7 @@ public class Stage {
     return Optional.empty();
   }
 
-  public void paint(Graphics g) {
+  public synchronized void paint(Graphics g) {
     grid.paint(g, this);
     // where to draw text in the information area
     final int hTab = 10;

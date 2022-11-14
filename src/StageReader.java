@@ -14,21 +14,29 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import javax.imageio.ImageIO;
 
-public class StageReader {
+public class StageReader{
   //
   // The following three methods may need modification
   //
+
   private static Actor makeActor(Cell loc, String desc, Actor.Player player) {
     Actor actor;
     BufferedImage img = images.get(desc);
     int rate = Integer.valueOf(speed.get(desc));
     int harm = Integer.valueOf(damage.get(desc));
+
     if(desc.equals("Cat")) {
       actor = new Cat(loc, img, desc, player, rate, harm);
+      actor.start();
+
     } else if(desc.equals("Dog")) {
       actor = new Dog(loc, img, desc, player, rate, harm);
+      actor.start();
+
     } else if(desc.equals("Bird")) {
       actor = new Bird(loc, img, desc, player, rate, harm);
+      actor.start();
+
     } else {
       actor = null;
       System.err.println("Unsupported Actor: " + desc);
@@ -247,7 +255,7 @@ public class StageReader {
       images = new HashMap<String,BufferedImage>();
       for(Entry<String,String> entry: entries.get("Images").entrySet()) {
         try {
-          images.put(entry.getKey(), ImageIO.read(new File("assets/"+entry.getValue())));
+          images.put(entry.getKey(), ImageIO.read(new File("/Users/jacknagle/Documents/GitHub/comp2000_2022/assets/"+entry.getValue())));
         } catch (IOException e) {
           fail("Couldn't open " + entry.getValue());
         }

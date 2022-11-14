@@ -7,6 +7,7 @@ import java.awt.Graphics;
 import java.awt.event.MouseEvent;
 import java.time.Duration;
 import java.time.Instant;
+import java.util.Timer;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -27,9 +28,9 @@ public class Main extends JFrame {
     }
 
     @Override
-    public void paint(Graphics g) {
-      if(stage != null) {
-          stage.paint(g);
+    public synchronized void paint(Graphics g) {
+      if (stage != null) {
+        stage.paint(g);
       }
     }
 
@@ -45,25 +46,31 @@ public class Main extends JFrame {
 
     // MouseClicked no longer used by this branch
     @Override
-    public void mouseClicked(MouseEvent e) {}
+    public void mouseClicked(MouseEvent e) {
+    }
 
     // Methods that are required by
     // implements MouseListener, KeyListener
     // but are unused by our application
     @Override
-    public void mousePressed(MouseEvent e) {}
+    public void mousePressed(MouseEvent e) {
+    }
 
     @Override
-    public void mouseReleased(MouseEvent e) {}
+    public void mouseReleased(MouseEvent e) {
+    }
 
     @Override
-    public void mouseEntered(MouseEvent e) {}
+    public void mouseEntered(MouseEvent e) {
+    }
 
     @Override
-    public void mouseExited(MouseEvent e) {}
+    public void mouseExited(MouseEvent e) {
+    }
 
     @Override
-    public void keyTyped(KeyEvent e) {}
+    public void keyTyped(KeyEvent e) {
+    }
   }
 
   final Canvas canvas;
@@ -87,9 +94,12 @@ public class Main extends JFrame {
   public void run() {
     // Re-draw the screen 50 times per second
     Thread paintThread = new Thread(() -> {
-      while(true) {
+      System.out.println(Thread.currentThread().getName() + ", " + Thread.currentThread().isAlive() + ", "
+          + Thread.currentThread().getState());
+
+      while (true) {
         Instant startTime = Instant.now();
-        if(canvas.stage != null) {
+        if (canvas.stage != null) {
           canvas.repaint();
         }
         Instant endTime = Instant.now();
@@ -102,11 +112,13 @@ public class Main extends JFrame {
     Instant startUpdate;
     Instant endUpdate;
     long updateDuration;
-    while(true) {
+
+    while (true) {
       // Build stage
-      if(canvas.stage == null || canvas.stage.cleared) {
+      if (canvas.stage == null || canvas.stage.cleared) {
         canvas.stageno = (canvas.stageno % canvas.maxstages) + 1;
-        String stagefile = "data/stage" + Integer.toString(canvas.stageno) + ".map";
+        String stagefile = "/Users/jacknagle/Documents/GitHub/comp2000_2022/data/stage"
+            + Integer.toString(canvas.stageno) + ".map";
         canvas.stage = StageReader.buildStage(stagefile);
         canvas.stage.cleared = false;
       }
@@ -115,7 +127,11 @@ public class Main extends JFrame {
       canvas.stage.update();
       endUpdate = Instant.now();
       updateDuration = Duration.between(startUpdate, endUpdate).toMillis();
-      doSleep(15l - updateDuration);
+
+      if(updateDuration<15l){
+        doSleep(15l-updateDuration);
+      }
+
     }
   }
 
@@ -124,6 +140,7 @@ public class Main extends JFrame {
       Thread.sleep(millis);
     } catch (InterruptedException e) {
       e.printStackTrace();
+      System.out.println("chicken KING");
     }
   }
 }

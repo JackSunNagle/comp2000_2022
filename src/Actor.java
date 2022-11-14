@@ -1,10 +1,14 @@
 import java.awt.image.BufferedImage;
 import java.awt.Graphics;
 
-public abstract class Actor {
+public abstract class Actor extends Thread {
   static int size = Cell.size;
   private Cell loc;
-  enum Player {Human, Bot};
+
+  enum Player {
+    Human, Bot
+  };
+
   private Player player;
   int speed;
   int turns;
@@ -13,6 +17,7 @@ public abstract class Actor {
   protected MoveStrategy strat;
   protected String desc;
   protected BufferedImage img;
+  Thread t;
 
   public Actor(Cell l, BufferedImage i, String d, Player p, int s, int harm) {
     loc = l;
@@ -25,23 +30,39 @@ public abstract class Actor {
     damage = harm;
   }
 
-  public void paint(Graphics g) {
+  public synchronized void paint(Graphics g) {
     g.drawImage(img, loc.x, loc.y, size, size, null);
   }
 
-  public boolean isHuman() {
+  public synchronized boolean isHuman() {
     return player == Player.Human;
   }
 
-  public boolean isBot() {
+  public synchronized boolean isBot() {
     return player == Player.Bot;
   }
 
-  public void setLocation(Cell inLoc) {
+  public synchronized void setLocation(Cell inLoc) {
     loc = inLoc;
   }
 
-  public Cell getLocation() {
+  public synchronized Cell getLocation() {
     return loc;
   }
+
+  @Override
+  public void run() {
+    System.out.println("New thread - "+desc+": " + Thread.currentThread().getName());
+    try {
+      while(true){
+        System.out.println(desc + ": " + Thread.currentThread().getName() + ", " + Thread.currentThread().isAlive() + ", " + Thread.currentThread().getState());
+        Thread.sleep(1000);
+      }
+
+    } catch (Exception e) {
+      System.out.println(desc + "Exception Caught");
+    }
+
+  }
+
 }
